@@ -3,7 +3,9 @@
     "allow": [
       "Bash(python test_backend.py:*)",
       "Bash(pip install:*)",
-      "Bash(python -m pip install:*)"
+      "Bash(python -m pip install:*)",
+      "Bash(python test_api.py:*)",
+      "Bash(python:*)"
     ]
   }
 }

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syllabus to Plan</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .input-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 250px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 13px;
+            resize: vertical;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .results {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .results h2 {
+            margin-bottom: 15px;
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 8px;
+        }
+
+        .results h3 {
+            margin-top: 30px;
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .assignment-item {
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 4px solid #007bff;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .assignment-item strong {
+            color: #333;
+        }
+
+        .assignment-meta {
+            color: #666;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .week-item {
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #28a745;
+        }
+
+        .week-header {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .week-stats {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-right: 5px;
+            font-weight: 500;
+        }
+
+        .type-exam { background-color: #dc3545; color: white; }
+        .type-project { background-color: #fd7e14; color: white; }
+        .type-quiz { background-color: #ffc107; color: black; }
+        .type-homework { background-color: #17a2b8; color: white; }
+        .type-other { background-color: #6c757d; color: white; }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .empty {
+            color: #999;
+            font-style: italic;
+            padding: 20px;
+            text-align: center;
+        }
+
+        #loading {
+            display: none;
+            color: #007bff;
+            margin-top: 10px;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            background-color: white;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            color: #999;
+            font-weight: 600;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Syllabus to Plan</h1>
+
+    <div class="input-section">
+        <div class="section-title">Option 1: Paste Text</div>
+        <label for="courseCode">Course Code (optional)</label>
+        <input
+            type="text"
+            id="courseCode"
+            placeholder="e.g., CSE 374, MATH 101"
+            value="">
+
+        <label for="syllabusText">Paste Syllabus Text</label>
+        <textarea
+            id="syllabusText"
+            placeholder="Paste your course syllabus here..."></textarea>
+
+        <button id="analyzeBtn" onclick="analyzeSyllabus()">Analyze Syllabus</button>
+        <div id="loading">Analyzing...</div>
+    </div>
+
+    <div class="divider">OR</div>
+
+    <div class="input-section">
+        <div class="section-title">Option 2: Upload PDF</div>
+        <label for="pdfCourseCode">Course Code (required)</label>
+        <input
+            type="text"
+            id="pdfCourseCode"
+            placeholder="e.g., CSE 374, MATH 101"
+            value="">
+
+        <label for="pdfFile">Upload Syllabus PDF</label>
+        <input
+            type="file"
+            id="pdfFile"
+            accept=".pdf">
+
+        <button id="analyzePdfBtn" onclick="analyzePdf()">Analyze PDF</button>
+        <div id="pdfLoading" style="display: none; color: #007bff; margin-top: 10px;">Analyzing...</div>
+    </div>
+
+    <div id="results" style="display: none;" class="results">
+        <div id="errorMessage"></div>
+
+        <div id="assignmentsSection">
+            <h2>Assignments</h2>
+            <div id="assignmentsList"></div>
+        </div>
+
+        <div id="workloadSection">
+            <h3>Weekly Workload</h3>
+            <div id="workloadList"></div>
+        </div>
+    </div>
+
+    <script>
+        async function analyzeSyllabus() {
+            const courseCode = document.getElementById('courseCode').value.trim();
+            const syllabusText = document.getElementById('syllabusText').value.trim();
+
+            const errorDiv = document.getElementById('errorMessage');
+            const resultsDiv = document.getElementById('results');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const loading = document.getElementById('loading');
+
+            errorDiv.innerHTML = '';
+
+            if (!syllabusText) {
+                errorDiv.innerHTML = '<div class="error">Please paste syllabus text.</div>';
+                return;
+            }
+
+            analyzeBtn.disabled = true;
+            loading.style.display = 'block';
+
+            try {
+                const response = await fetch('http://localhost:8000/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        course: courseCode,
+                        text: syllabusText
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                displayResults(data);
+                resultsDiv.style.display = 'block';
+
+            } catch (error) {
+                errorDiv.innerHTML = `<div class="error">Error: ${error.message}. Make sure the backend is running at http://localhost:8000</div>`;
+                resultsDiv.style.display = 'block';
+            } finally {
+                analyzeBtn.disabled = false;
+                loading.style.display = 'none';
+            }
+        }
+
+        async function analyzePdf() {
+            const courseCode = document.getElementById('pdfCourseCode').value.trim();
+            const fileInput = document.getElementById('pdfFile');
+            const file = fileInput.files[0];
+
+            const errorDiv = document.getElementById('errorMessage');
+            const resultsDiv = document.getElementById('results');
+            const analyzePdfBtn = document.getElementById('analyzePdfBtn');
+            const loading = document.getElementById('pdfLoading');
+
+            errorDiv.innerHTML = '';
+
+            if (!courseCode) {
+                errorDiv.innerHTML = '<div class="error">Course code is required for PDF upload.</div>';
+                resultsDiv.style.display = 'block';
+                return;
+            }
+
+            if (!file) {
+                errorDiv.innerHTML = '<div class="error">Please select a PDF file.</div>';
+                resultsDiv.style.display = 'block';
+                return;
+            }
+
+            if (!file.name.endsWith('.pdf')) {
+                errorDiv.innerHTML = '<div class="error">Only PDF files are supported.</div>';
+                resultsDiv.style.display = 'block';
+                return;
+            }
+
+            analyzePdfBtn.disabled = true;
+            loading.style.display = 'block';
+
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('course', courseCode);
+
+                const response = await fetch('http://localhost:8000/analyze-pdf', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                displayResults(data);
+                resultsDiv.style.display = 'block';
+
+            } catch (error) {
+                errorDiv.innerHTML = `<div class="error">Error: ${error.message}. Make sure the backend is running at http://localhost:8000</div>`;
+                resultsDiv.style.display = 'block';
+            } finally {
+                analyzePdfBtn.disabled = false;
+                loading.style.display = 'none';
+            }
+        }
+
+        function displayResults(data) {
+            displayAssignments(data.assignments);
+            displayWeeklyWorkload(data.weekly_workload);
+        }
+
+        function displayAssignments(assignments) {
+            const container = document.getElementById('assignmentsList');
+
+            if (!assignments || assignments.length === 0) {
+                container.innerHTML = '<div class="empty">No assignments found.</div>';
+                return;
+            }
+
+            // Sort chronologically
+            const sorted = [...assignments].sort((a, b) =>
+                new Date(a.due_date) - new Date(b.due_date)
+            );
+
+            const html = sorted.map(assignment => {
+                const date = new Date(assignment.due_date);
+                const formattedDate = date.toLocaleDateString('en-US', {
+                    weekday: 'short',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+
+                return `
+                    <div class="assignment-item">
+                        <strong>${assignment.name}</strong>
+                        <span class="type-badge type-${assignment.assignment_type}">${assignment.assignment_type.toUpperCase()}</span>
+                        <div class="assignment-meta">
+                            ${assignment.course} • Due: ${formattedDate}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = html;
+        }
+
+        function displayWeeklyWorkload(weeks) {
+            const container = document.getElementById('workloadList');
+
+            if (!weeks || weeks.length === 0) {
+                container.innerHTML = '<div class="empty">No weekly workload data.</div>';
+                return;
+            }
+
+            const html = weeks.map(week => {
+                const startDate = new Date(week.week_start_date);
+                const endDate = new Date(week.week_end_date);
+
+                const formattedStart = startDate.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric'
+                });
+                const formattedEnd = endDate.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+
+                const typeBreakdown = Object.entries(week.assignments_by_type)
+                    .map(([type, count]) => `${count} ${type}`)
+                    .join(', ');
+
+                return `
+                    <div class="week-item">
+                        <div class="week-header">
+                            ${formattedStart} - ${formattedEnd}
+                        </div>
+                        <div class="week-stats">
+                            <strong>${week.assignment_count}</strong> assignments •
+                            Intensity: <strong>${week.intensity_score.toFixed(1)}</strong>
+                            ${typeBreakdown ? ` • ${typeBreakdown}` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = html;
+        }
+
+        // Allow Enter key in course code to trigger analysis
+        document.getElementById('courseCode').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                analyzeSyllabus();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -2,8 +2,8 @@
 Test cases for models.py, parser.py, and workload.py
 """
 from datetime import date
-from models import Assignment, AssignmentType, Course, WeeklyWorkload
-from workload import compute_weekly_workload, get_week_start
+from backend.models import Assignment, AssignmentType, Course, WeeklyWorkload
+from backend.workload import compute_weekly_workload, get_week_start
 import json
 
 

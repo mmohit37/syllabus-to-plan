@@ -1,6 +1,6 @@
 from datetime import date, timedelta
 from collections import defaultdict
-from models import Assignment, AssignmentType, WeeklyWorkload
+from backend.models import Assignment, AssignmentType, WeeklyWorkload
 
 
 TYPE_WEIGHTS = {

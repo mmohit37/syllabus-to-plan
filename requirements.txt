@@ -3,4 +3,4 @@ uvicorn
 pydantic
 pdfplumber
 python-multipart
-openai
+anthropic

@@ -1,7 +1,7 @@
 import json
 from datetime import date
 from typing import Optional
-from models import Assignment, AssignmentType
+from backend.models import Assignment, AssignmentType
 
 
 SYSTEM_PROMPT = """You are an AI assistant that extracts assignment deadlines from college course syllabi.
@@ -41,24 +41,30 @@ Example output:
 
 def call_llm(system_prompt: str, user_prompt: str) -> str:
     """
-    Placeholder for LLM API call.
-
-    Replace this function with your LLM provider of choice (OpenAI, Anthropic, etc.)
+    Call Claude API to process syllabus text.
 
     Args:
         system_prompt: Instructions for the LLM
         user_prompt: User content to process
 
     Returns:
-        Raw text response from LLM
-
-    Raises:
-        NotImplementedError: This is a placeholder function
+        Raw text response from Claude
     """
-    raise NotImplementedError(
-        "call_llm() must be implemented with your LLM provider. "
-        "Expected to return a JSON string matching the assignment schema."
+    import os
+    from anthropic import Anthropic
+
+    client = Anthropic(api_key=os.environ.get("CLAUDE_API_KEY"))
+
+    message = client.messages.create(
+        model="claude-sonnet-4-5-20250929",
+        max_tokens=4096,
+        system=system_prompt,
+        messages=[
+            {"role": "user", "content": user_prompt}
+        ]
     )
+
+    return message.content[0].text
 
 
 def parse_syllabus(syllabus_text: str, course_code: Optional[str] = None) -> list[Assignment]:

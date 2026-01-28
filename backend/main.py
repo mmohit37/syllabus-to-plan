@@ -1,5 +1,6 @@
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from backend.parser import parse_syllabus
 from backend.workload import compute_weekly_workload
@@ -29,7 +30,18 @@ class AnalyzeResponse(BaseModel):
 
 
 @app.get("/")
+def serve_frontend():
+    """
+    Serve the frontend UI at the root URL.
+    """
+    return FileResponse("index.html")
+
+
+@app.get("/health")
 def health_check():
+    """
+    Health check endpoint for monitoring.
+    """
     return {"status": "ok"}
 
 

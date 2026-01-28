@@ -61,49 +61,75 @@ def analyze_syllabus(request: AnalyzeRequest):
 
 @app.post("/analyze-pdf", response_model=AnalyzeResponse)
 async def analyze_pdf(
-    file: UploadFile = File(...),
-    course: str = Form(...)
+    files: list[UploadFile] = File(...),
+    courses: list[str] = Form(...)
 ):
     """
-    Parse syllabus PDF and return assignments with weekly workload analysis.
+    Parse syllabus PDFs and return assignments with weekly workload analysis.
 
     Args:
-        file: Uploaded PDF file
-        course: Course code
+        files: List of uploaded PDF files (max 5)
+        courses: List of course codes (one per file)
 
     Returns:
         Assignments and weekly workload summaries
     """
-    if not file.filename.endswith('.pdf'):
+    # Validate number of files
+    if len(files) > 5:
         raise HTTPException(
             status_code=400,
-            detail="Only PDF files are supported"
+            detail="Maximum 5 PDF files allowed"
         )
 
-    try:
-        content = await file.read()
+    # Validate course codes match number of files
+    if len(courses) != len(files):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Number of course codes ({len(courses)}) must match number of files ({len(files)})"
+        )
 
-        # Extract text from PDF using pdfplumber
-        import io
-        text_content = ""
-        with pdfplumber.open(io.BytesIO(content)) as pdf:
-            for page in pdf.pages:
-                page_text = page.extract_text()
-                if page_text:
-                    text_content += page_text + "\n"
-
-        if not text_content.strip():
+    # Validate all files are PDFs
+    for file in files:
+        if not file.filename.endswith('.pdf'):
             raise HTTPException(
                 status_code=400,
-                detail="Could not extract text from PDF"
+                detail=f"Only PDF files are supported. Invalid file: {file.filename}"
             )
 
-        # Reuse existing parsing and workload logic
-        assignments = parse_syllabus(text_content, course)
-        weekly_workload = compute_weekly_workload(assignments)
+    try:
+        all_assignments = []
+
+        # Process each PDF
+        for file, course in zip(files, courses):
+            content = await file.read()
+
+            # Extract text from PDF using pdfplumber
+            import io
+            text_content = ""
+            with pdfplumber.open(io.BytesIO(content)) as pdf:
+                for page in pdf.pages:
+                    page_text = page.extract_text()
+                    if page_text:
+                        text_content += page_text + "\n"
+
+            if not text_content.strip():
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Could not extract text from PDF: {file.filename}"
+                )
+
+            # Parse this syllabus
+            assignments = parse_syllabus(text_content, course)
+            all_assignments.extend(assignments)
+
+        # Sort all assignments chronologically
+        all_assignments.sort(key=lambda a: a.due_date)
+
+        # Compute weekly workload across all courses
+        weekly_workload = compute_weekly_workload(all_assignments)
 
         return AnalyzeResponse(
-            assignments=assignments,
+            assignments=all_assignments,
             weekly_workload=weekly_workload
         )
 

@@ -196,6 +196,14 @@
             color: #333;
             margin-bottom: 15px;
         }
+
+        .pdf-input-group {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
+        }
     </style>
 </head>
 <body>
@@ -203,7 +211,7 @@
 
     <div class="input-section">
         <div class="section-title">Option 1: Paste Text</div>
-        <label for="courseCode">Course Code (optional)</label>
+        <label for="courseCode">Course Code (required)</label>
         <input
             type="text"
             id="courseCode"
@@ -222,21 +230,30 @@
     <div class="divider">OR</div>
 
     <div class="input-section">
-        <div class="section-title">Option 2: Upload PDF</div>
-        <label for="pdfCourseCode">Course Code (required)</label>
-        <input
-            type="text"
-            id="pdfCourseCode"
-            placeholder="e.g., CSE 374, MATH 101"
-            value="">
+        <div class="section-title">Option 2: Upload PDFs (max 5)</div>
 
-        <label for="pdfFile">Upload Syllabus PDF</label>
-        <input
-            type="file"
-            id="pdfFile"
-            accept=".pdf">
+        <div id="pdfInputsContainer">
+            <div class="pdf-input-group" id="pdfGroup1">
+                <label for="pdfFile1">PDF File 1</label>
+                <input
+                    type="file"
+                    id="pdfFile1"
+                    class="pdf-file-input"
+                    accept=".pdf"
+                    onchange="handleFileChange(1)">
 
-        <button id="analyzePdfBtn" onclick="analyzePdf()">Analyze PDF</button>
+                <label for="pdfCourse1">Course Code for PDF 1</label>
+                <input
+                    type="text"
+                    id="pdfCourse1"
+                    class="pdf-course-input"
+                    placeholder="e.g., CSE 374"
+                    value="">
+            </div>
+        </div>
+
+        <button id="addPdfBtn" onclick="addPdfInput()" style="background-color: #28a745; margin-bottom: 10px;">Add Another PDF</button>
+        <button id="analyzePdfBtn" onclick="analyzePdf()">Analyze PDFs</button>
         <div id="pdfLoading" style="display: none; color: #007bff; margin-top: 10px;">Analyzing...</div>
     </div>
 
@@ -255,6 +272,49 @@
     </div>
 
     <script>
+        let pdfInputCount = 1;
+
+        function addPdfInput() {
+            if (pdfInputCount >= 5) {
+                alert('Maximum 5 PDF files allowed');
+                return;
+            }
+
+            pdfInputCount++;
+            const container = document.getElementById('pdfInputsContainer');
+
+            const newGroup = document.createElement('div');
+            newGroup.className = 'pdf-input-group';
+            newGroup.id = `pdfGroup${pdfInputCount}`;
+            newGroup.innerHTML = `
+                <label for="pdfFile${pdfInputCount}">PDF File ${pdfInputCount}</label>
+                <input
+                    type="file"
+                    id="pdfFile${pdfInputCount}"
+                    class="pdf-file-input"
+                    accept=".pdf"
+                    onchange="handleFileChange(${pdfInputCount})">
+
+                <label for="pdfCourse${pdfInputCount}">Course Code for PDF ${pdfInputCount}</label>
+                <input
+                    type="text"
+                    id="pdfCourse${pdfInputCount}"
+                    class="pdf-course-input"
+                    placeholder="e.g., CSE 374"
+                    value="">
+            `;
+
+            container.appendChild(newGroup);
+
+            if (pdfInputCount >= 5) {
+                document.getElementById('addPdfBtn').disabled = true;
+            }
+        }
+
+        function handleFileChange(index) {
+            // Optional: could add validation here
+        }
+
         async function analyzeSyllabus() {
             const courseCode = document.getElementById('courseCode').value.trim();
             const syllabusText = document.getElementById('syllabusText').value.trim();
@@ -266,8 +326,15 @@
 
             errorDiv.innerHTML = '';
 
+            if (!courseCode) {
+                errorDiv.innerHTML = '<div class="error">Course code is required.</div>';
+                resultsDiv.style.display = 'block';
+                return;
+            }
+
             if (!syllabusText) {
                 errorDiv.innerHTML = '<div class="error">Please paste syllabus text.</div>';
+                resultsDiv.style.display = 'block';
                 return;
             }
 
@@ -294,6 +361,8 @@
                 displayResults(data);
                 resultsDiv.style.display = 'block';
 
+                // Do NOT clear textarea and course code after analysis
+
             } catch (error) {
                 errorDiv.innerHTML = `<div class="error">Error: ${error.message}. Make sure the backend is running at http://localhost:8000</div>`;
                 resultsDiv.style.display = 'block';
@@ -304,10 +373,6 @@
         }
 
         async function analyzePdf() {
-            const courseCode = document.getElementById('pdfCourseCode').value.trim();
-            const fileInput = document.getElementById('pdfFile');
-            const file = fileInput.files[0];
-
             const errorDiv = document.getElementById('errorMessage');
             const resultsDiv = document.getElementById('results');
             const analyzePdfBtn = document.getElementById('analyzePdfBtn');
@@ -315,20 +380,37 @@
 
             errorDiv.innerHTML = '';
 
-            if (!courseCode) {
-                errorDiv.innerHTML = '<div class="error">Course code is required for PDF upload.</div>';
-                resultsDiv.style.display = 'block';
-                return;
+            // Collect all files and course codes
+            const files = [];
+            const courses = [];
+
+            for (let i = 1; i <= pdfInputCount; i++) {
+                const fileInput = document.getElementById(`pdfFile${i}`);
+                const courseInput = document.getElementById(`pdfCourse${i}`);
+
+                if (fileInput && fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    const course = courseInput.value.trim();
+
+                    if (!course) {
+                        errorDiv.innerHTML = `<div class="error">Course code is required for PDF ${i}.</div>`;
+                        resultsDiv.style.display = 'block';
+                        return;
+                    }
+
+                    if (!file.name.endsWith('.pdf')) {
+                        errorDiv.innerHTML = `<div class="error">Only PDF files are supported. Invalid file: ${file.name}</div>`;
+                        resultsDiv.style.display = 'block';
+                        return;
+                    }
+
+                    files.push(file);
+                    courses.push(course);
+                }
             }
 
-            if (!file) {
-                errorDiv.innerHTML = '<div class="error">Please select a PDF file.</div>';
-                resultsDiv.style.display = 'block';
-                return;
-            }
-
-            if (!file.name.endsWith('.pdf')) {
-                errorDiv.innerHTML = '<div class="error">Only PDF files are supported.</div>';
+            if (files.length === 0) {
+                errorDiv.innerHTML = '<div class="error">Please select at least one PDF file.</div>';
                 resultsDiv.style.display = 'block';
                 return;
             }
@@ -338,8 +420,15 @@
 
             try {
                 const formData = new FormData();
-                formData.append('file', file);
-                formData.append('course', courseCode);
+
+                // Append all files and courses
+                files.forEach(file => {
+                    formData.append('files', file);
+                });
+
+                courses.forEach(course => {
+                    formData.append('courses', course);
+                });
 
                 const response = await fetch('http://localhost:8000/analyze-pdf', {
                     method: 'POST',
@@ -355,6 +444,9 @@
                 displayResults(data);
                 resultsDiv.style.display = 'block';
 
+                // Clear all PDF inputs and course codes after successful analysis
+                clearPdfInputs();
+
             } catch (error) {
                 errorDiv.innerHTML = `<div class="error">Error: ${error.message}. Make sure the backend is running at http://localhost:8000</div>`;
                 resultsDiv.style.display = 'block';
@@ -362,6 +454,27 @@
                 analyzePdfBtn.disabled = false;
                 loading.style.display = 'none';
             }
+        }
+
+        function clearPdfInputs() {
+            // Remove all PDF input groups except the first one
+            const container = document.getElementById('pdfInputsContainer');
+            while (pdfInputCount > 1) {
+                const group = document.getElementById(`pdfGroup${pdfInputCount}`);
+                if (group) {
+                    container.removeChild(group);
+                }
+                pdfInputCount--;
+            }
+
+            // Clear the first group
+            const firstFileInput = document.getElementById('pdfFile1');
+            const firstCourseInput = document.getElementById('pdfCourse1');
+            if (firstFileInput) firstFileInput.value = '';
+            if (firstCourseInput) firstCourseInput.value = '';
+
+            // Re-enable the add button
+            document.getElementById('addPdfBtn').disabled = false;
         }
 
         function displayResults(data) {

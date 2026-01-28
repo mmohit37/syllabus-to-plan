@@ -274,6 +274,11 @@
     <script>
         let pdfInputCount = 1;
 
+        function parseDate(dateStr) {
+            const [year, month, day] = dateStr.split('-').map(Number);
+            return new Date(year, month - 1, day);
+        }
+
         function addPdfInput() {
             if (pdfInputCount >= 5) {
                 alert('Maximum 5 PDF files allowed');
@@ -497,7 +502,7 @@
             );
 
             const html = sorted.map(assignment => {
-                const date = new Date(assignment.due_date);
+                const date = parseDate(assignment.due_date);
                 const formattedDate = date.toLocaleDateString('en-US', {
                     weekday: 'short',
                     year: 'numeric',
@@ -528,8 +533,8 @@
             }
 
             const html = weeks.map(week => {
-                const startDate = new Date(week.week_start_date);
-                const endDate = new Date(week.week_end_date);
+                const startDate = parseDate(week.week_start_date);
+                const endDate = parseDate(week.week_end_date);
 
                 const formattedStart = startDate.toLocaleDateString('en-US', {
                     month: 'short',

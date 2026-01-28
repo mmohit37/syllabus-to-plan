@@ -27,6 +27,7 @@ The tool accepts either pasted text or PDF uploads, processes them locally, and 
 - **Multi-PDF support**: Upload up to 5 syllabi at once for semester-wide planning
 - **Automatic extraction**: Uses Claude AI to identify assignment names, types, and due dates
 - **Date normalization**: Infers current year if syllabi only specify month/day
+- **Timezone-safe date handling**: Dates are parsed in local timezone to ensure displayed dates match syllabus dates exactly
 - **Course code enforcement**: Requires explicit course codes to prevent misattribution
 - **Chronological sorting**: All assignments sorted by due date across all courses
 - **Weekly workload aggregation**: Groups assignments by week (Monday-Sunday)
@@ -50,11 +51,13 @@ The tool accepts either pasted text or PDF uploads, processes them locally, and 
 
 **Frontend:**
 - Plain HTML/CSS/JavaScript (no frameworks)
+- Served by FastAPI at root URL ("/")
 
 **Architecture:**
 - In-memory processing (no database)
 - CORS-enabled for local development
 - Single-page application
+- Backend uses Python `date` objects (not `datetime`) to avoid timezone issues
 
 ---
 
@@ -72,13 +75,13 @@ The tool accepts either pasted text or PDF uploads, processes them locally, and 
 2. **Create and activate a virtual environment**
 
    ```bash
-   # Windows
-   python -m venv venv
-   venv\Scripts\activate
-
    # macOS/Linux
    python3 -m venv venv
    source venv/bin/activate
+
+   # Windows
+   python -m venv venv
+   venv\Scripts\activate
    ```
 
 3. **Install dependencies**
@@ -90,14 +93,14 @@ The tool accepts either pasted text or PDF uploads, processes them locally, and 
 4. **Set your Claude API key**
 
    ```bash
+   # macOS/Linux
+   export CLAUDE_API_KEY=your-api-key-here
+
    # Windows (Command Prompt)
    set CLAUDE_API_KEY=your-api-key-here
 
    # Windows (PowerShell)
    $env:CLAUDE_API_KEY="your-api-key-here"
-
-   # macOS/Linux
-   export CLAUDE_API_KEY=your-api-key-here
    ```
 
 5. **Start the backend server**
@@ -108,14 +111,20 @@ The tool accepts either pasted text or PDF uploads, processes them locally, and 
 
    The server will start at `http://127.0.0.1:8000`
 
-   You can verify it's running by visiting `http://127.0.0.1:8000/` - you should see:
-   ```json
-   {"status": "ok"}
-   ```
+6. **Access the frontend**
 
-6. **Open the frontend**
+   You have two options:
 
-   Simply open `index.html` in your web browser (double-click or right-click → Open With → Browser)
+   **Option A: Via FastAPI (recommended)**
+   - Visit `http://127.0.0.1:8000/` in your browser
+   - The backend serves the frontend HTML automatically at the root URL
+   - This ensures all API calls work correctly
+
+   **Option B: Direct file access (local testing)**
+   - Open `index.html` directly in your browser (double-click or right-click → Open With → Browser)
+   - The frontend will make API calls to `http://127.0.0.1:8000`
+
+   **Health check:** You can verify the backend is running by visiting `http://127.0.0.1:8000/health` - you should see `{"status": "ok"}`
 
 ---
 
@@ -160,7 +169,7 @@ The tool accepts either pasted text or PDF uploads, processes them locally, and 
 **Scenario:** You're taking 3 courses and want to plan your semester workload.
 
 1. Start the backend: `uvicorn backend.main:app --reload`
-2. Open `index.html` in your browser
+2. Open your browser and visit `http://127.0.0.1:8000/`
 3. Go to "Option 2: Upload PDFs"
 4. Upload syllabus PDF for CSE 374, enter "CSE 374" as course code
 5. Click "Add Another PDF"
@@ -227,8 +236,8 @@ This is a **local MVP application** designed to demonstrate core functionality. 
 
 1. Follow the Setup Instructions above
 2. Obtain a Claude API key from Anthropic (free tier available)
-3. Run the backend server locally
-4. Open the frontend HTML file in a browser
+3. Run the backend server locally with `uvicorn backend.main:app --reload`
+4. Access the frontend by visiting `http://127.0.0.1:8000/` (FastAPI serves the HTML automatically)
 
 **Why local-only?**
 

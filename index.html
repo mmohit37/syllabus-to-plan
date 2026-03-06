@@ -3,709 +3,280 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SyP — Syllabus to Plan</title>
-    <link rel="icon" href="/logo" type="image/png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <title>Syllabus to Plan</title>
     <style>
-        :root {
-            --primary: #4F46E5;
-            --primary-dark: #3730A3;
-            --primary-light: #C7D2FE;
-            --bg: #EEF2FF;
-            --card: #FFFFFF;
-            --text: #0F172A;
-            --text-muted: #64748B;
-            --border: #E2E8F0;
-            --radius: 14px;
-            --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.05);
-            --shadow-lg: 0 12px 40px rgba(0,0,0,0.14);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 920px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 900px;
             margin: 0 auto;
-            padding: 28px 20px 60px;
+            background-color: #f5f5f5;
         }
 
-        /* ── Hero ── */
-        .hero {
-            background: linear-gradient(135deg, #1E1B4B 0%, #4338CA 55%, #0E7490 100%);
-            border-radius: 20px;
-            padding: 48px 44px 44px;
-            margin-bottom: 24px;
-            position: relative;
-            overflow: hidden;
+        h1 {
+            margin-bottom: 30px;
+            color: #333;
         }
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -80px; right: -80px;
-            width: 360px; height: 360px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 50%;
-            pointer-events: none;
+
+        .input-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .hero::after {
-            content: '';
-            position: absolute;
-            bottom: -100px; left: -60px;
-            width: 280px; height: 280px;
-            background: rgba(255,255,255,0.04);
-            border-radius: 50%;
-            pointer-events: none;
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
         }
-        .hero-logo {
-            position: absolute;
-            top: 8px; right: 32px;
-            height: 130px;
-            filter: drop-shadow(0 4px 18px rgba(0,0,0,0.35)) brightness(1.08);
-            z-index: 1;
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-bottom: 15px;
         }
-        .hero h1 {
-            font-size: 62px;
-            font-weight: 900;
+
+        textarea {
+            width: 100%;
+            min-height: 250px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 13px;
+            resize: vertical;
+        }
+
+        button {
+            background-color: #007bff;
             color: white;
-            letter-spacing: -4px;
-            line-height: 1;
-            margin-bottom: 12px;
-            position: relative;
-            z-index: 1;
-        }
-        .hero-tagline {
+            border: none;
+            padding: 12px 30px;
+            border-radius: 4px;
             font-size: 16px;
-            color: rgba(255,255,255,0.78);
-            font-weight: 400;
-            max-width: 460px;
-            line-height: 1.55;
-            position: relative;
-            z-index: 1;
+            cursor: pointer;
+            margin-top: 10px;
         }
-        .hero-pills {
-            display: flex;
-            gap: 8px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-            position: relative;
-            z-index: 1;
+
+        button:hover {
+            background-color: #0056b3;
         }
-        .hero-pill {
-            background: rgba(255,255,255,0.13);
-            border: 1px solid rgba(255,255,255,0.22);
-            color: rgba(255,255,255,0.88);
-            padding: 5px 13px;
-            border-radius: 20px;
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .results {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .results h2 {
+            margin-bottom: 15px;
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 8px;
+        }
+
+        .results h3 {
+            margin-top: 30px;
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .assignment-item {
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 4px solid #007bff;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .assignment-item strong {
+            color: #333;
+        }
+
+        .assignment-meta {
+            color: #666;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .week-item {
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #28a745;
+        }
+
+        .week-header {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .week-stats {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
             font-size: 12px;
+            margin-right: 5px;
             font-weight: 500;
         }
 
-        /* ── Cards ── */
-        .card {
-            background: var(--card);
-            border-radius: var(--radius);
-            padding: 26px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
+        .type-exam { background-color: #dc3545; color: white; }
+        .type-project { background-color: #fd7e14; color: white; }
+        .type-quiz { background-color: #ffc107; color: black; }
+        .type-homework { background-color: #17a2b8; color: white; }
+        .type-other { background-color: #6c757d; color: white; }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 4px;
             margin-bottom: 20px;
         }
 
-        /* ── Tabs ── */
-        .tabs {
-            display: flex;
-            gap: 4px;
-            background: #F1F5F9;
-            border-radius: 9px;
-            padding: 4px;
-            margin-bottom: 24px;
+        .empty {
+            color: #999;
+            font-style: italic;
+            padding: 20px;
+            text-align: center;
         }
-        .tab {
-            flex: 1;
-            padding: 9px 16px;
-            border: none;
-            border-radius: 6px;
-            background: transparent;
-            color: var(--text-muted);
-            font-weight: 500;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: inherit;
-        }
-        .tab.active {
-            background: white;
-            color: var(--primary);
-            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-            font-weight: 600;
-        }
-        .tab-panel { display: none; }
-        .tab-panel.active { display: block; }
 
-        /* ── Form ── */
-        label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text);
-            margin-bottom: 6px;
+        #loading {
+            display: none;
+            color: #007bff;
+            margin-top: 10px;
         }
-        input[type="text"] {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1.5px solid var(--border);
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 14px;
-            color: var(--text);
-            background: #FAFBFC;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            outline: none;
-            margin-bottom: 14px;
-        }
-        input[type="text"]:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(79,70,229,0.11);
-            background: white;
-        }
-        textarea {
-            width: 100%;
-            min-height: 190px;
-            padding: 12px 14px;
-            border: 1.5px solid var(--border);
-            border-radius: 8px;
-            font-family: 'Inter', monospace;
-            font-size: 13px;
-            color: var(--text);
-            background: #FAFBFC;
-            resize: vertical;
-            outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            line-height: 1.6;
-        }
-        textarea:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(79,70,229,0.11);
-            background: white;
-        }
+
         input[type="file"] {
             width: 100%;
-            padding: 10px 14px;
-            border: 1.5px dashed var(--border);
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 14px;
-            background: #FAFBFC;
-            margin-bottom: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        input[type="file"]:hover {
-            border-color: var(--primary);
-            background: #F5F3FF;
-        }
-
-        /* ── Buttons ── */
-        button.btn-primary {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 11px 28px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: inherit;
-            margin-top: 10px;
-        }
-        button.btn-primary:hover:not(:disabled) {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 14px rgba(79,70,229,0.38);
-        }
-        button.btn-primary:disabled {
-            opacity: 0.45;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        button.btn-green {
-            background: #059669;
-            color: white;
-            border: none;
-            padding: 10px 22px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: inherit;
-            transition: all 0.2s;
-            margin-bottom: 10px;
-        }
-        button.btn-green:hover { background: #047857; }
-        button.btn-green:disabled { opacity: 0.45; cursor: not-allowed; }
-
-        /* ── Export button ── */
-        #exportBtn {
-            display: none;
-            background: linear-gradient(135deg, #2563EB 0%, #4F46E5 100%);
-            color: white;
-            border: none;
-            padding: 12px 26px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: inherit;
-            transition: all 0.2s;
-            margin-bottom: 22px;
-            box-shadow: 0 2px 8px rgba(79,70,229,0.25);
-        }
-        #exportBtn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 18px rgba(79,70,229,0.4);
-        }
-
-        /* ── Loading ── */
-        .loading {
-            display: none;
-            align-items: center;
-            gap: 8px;
-            color: var(--primary);
-            font-size: 13px;
-            font-weight: 500;
-            margin-top: 10px;
-        }
-        .loading.visible { display: flex; }
-        .spinner {
-            width: 15px; height: 15px;
-            border: 2px solid var(--primary-light);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 0.75s linear infinite;
-            flex-shrink: 0;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* ── PDF groups ── */
-        .pdf-group {
-            background: #F8FAFC;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 14px 16px;
-            margin-bottom: 12px;
-        }
-        .pdf-group-title {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
-            margin-bottom: 10px;
-        }
-
-        /* ── Error ── */
-        .error {
-            background: #FEF2F2;
-            color: #991B1B;
-            border: 1px solid #FECACA;
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 16px;
-            font-size: 13px;
-        }
-
-        /* ── Section headers ── */
-        .section-header {
-            font-size: 17px;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 16px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid #EEF2FF;
-            display: flex;
-            align-items: center;
-            gap: 9px;
-        }
-        .section-dot {
-            width: 9px; height: 9px;
-            border-radius: 50%;
-            background: var(--primary);
-            flex-shrink: 0;
-        }
-
-        /* ── Assignment items ── */
-        .assignment-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 11px;
-            padding: 13px 14px;
-            margin-bottom: 8px;
-            border-radius: 9px;
-            background: #FAFAFA;
-            border: 1px solid var(--border);
-            transition: all 0.15s;
-        }
-        .assignment-item:hover {
-            border-color: var(--primary-light);
-            box-shadow: 0 2px 8px rgba(79,70,229,0.08);
-        }
-        .assignment-accent {
-            width: 4px;
-            border-radius: 2px;
-            align-self: stretch;
-            min-height: 38px;
-            flex-shrink: 0;
-        }
-        .assignment-body { flex: 1; min-width: 0; }
-        .assignment-name {
-            font-weight: 600;
-            font-size: 14px;
-            color: var(--text);
-            margin-bottom: 5px;
-        }
-        .assignment-meta {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            flex-wrap: wrap;
-        }
-        .badge {
-            display: inline-block;
-            padding: 2px 8px;
+            padding: 10px;
+            border: 1px solid #ddd;
             border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.2px;
-        }
-        .badge-exam    { background: #FEE2E2; color: #991B1B; }
-        .badge-project { background: #FFEDD5; color: #9A3412; }
-        .badge-quiz    { background: #FEF9C3; color: #854D0E; }
-        .badge-homework{ background: #DBEAFE; color: #1E40AF; }
-        .badge-other   { background: #F1F5F9; color: #475569; }
-        .meta-text { font-size: 12px; color: var(--text-muted); }
-        .grade-chip {
-            background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
-            color: #065F46;
-            font-size: 11px;
-            font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 4px;
-        }
-        .empty {
-            text-align: center;
-            padding: 32px;
-            color: var(--text-muted);
             font-size: 14px;
+            margin-bottom: 15px;
+            background-color: white;
         }
 
-        /* ── Heatmap ── */
-        .heatmap-legend {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 16px;
-            font-size: 12px;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-        .legend-bar {
-            width: 100px; height: 12px;
-            border-radius: 6px;
-            background: linear-gradient(to right, hsl(120,65%,42%), hsl(60,65%,48%), hsl(0,65%,50%));
-            border: 1px solid rgba(0,0,0,0.08);
-        }
-        .heatmap-hint {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-left: auto;
-            font-style: italic;
-        }
-        .heatmap-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            padding-bottom: 8px;
-        }
-        .heatmap-cell {
-            min-width: 118px;
-            flex: 1 1 118px;
-            max-width: 155px;
-            padding: 14px 12px;
-            border-radius: 10px;
+        .divider {
             text-align: center;
-            cursor: pointer;
-            transition: transform 0.15s, box-shadow 0.15s;
-            position: relative;
-            user-select: none;
-        }
-        .heatmap-cell:hover { transform: translateY(-5px); }
-        .heatmap-cell::after {
-            content: '↗';
-            position: absolute;
-            top: 7px; right: 9px;
-            font-size: 10px;
-            opacity: 0;
-            transition: opacity 0.15s;
-        }
-        .heatmap-cell:hover::after { opacity: 0.65; }
-        .heatmap-date {
-            font-size: 10px;
+            margin: 20px 0;
+            color: #999;
             font-weight: 600;
-            margin-bottom: 7px;
-            opacity: 0.85;
-            letter-spacing: 0.2px;
         }
-        .heatmap-count {
-            font-size: 22px;
-            font-weight: 800;
-            line-height: 1;
-            margin-bottom: 3px;
-        }
-        .heatmap-label { font-size: 10px; opacity: 0.8; margin-bottom: 5px; }
-        .heatmap-intensity { font-size: 10px; opacity: 0.72; }
 
-        /* ── Modal ── */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(15,23,42,0.58);
-            backdrop-filter: blur(5px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 20px;
-            animation: fadeIn 0.18s ease;
-        }
-        .modal-overlay.hidden { display: none; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .modal-card {
-            background: white;
-            border-radius: 18px;
-            width: 100%;
-            max-width: 510px;
-            max-height: 82vh;
-            overflow-y: auto;
-            box-shadow: 0 28px 70px rgba(0,0,0,0.28);
-            animation: slideUp 0.26s cubic-bezier(0.34, 1.4, 0.64, 1);
-        }
-        @keyframes slideUp {
-            from { transform: translateY(28px) scale(0.96); opacity: 0; }
-            to   { transform: translateY(0) scale(1); opacity: 1; }
-        }
-        .modal-header {
-            padding: 22px 24px 16px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 12px;
-            position: sticky;
-            top: 0;
-            background: white;
-            border-radius: 18px 18px 0 0;
-            z-index: 1;
-        }
-        .modal-title { font-size: 16px; font-weight: 700; color: var(--text); }
-        .modal-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
-        .modal-close {
-            width: 30px; height: 30px;
-            border: none;
-            background: #F1F5F9;
-            border-radius: 7px;
-            font-size: 17px;
-            cursor: pointer;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.15s;
-            flex-shrink: 0;
-            font-family: inherit;
-            line-height: 1;
-        }
-        .modal-close:hover { background: #E2E8F0; color: var(--text); }
-        .modal-body { padding: 18px 24px 24px; }
-        .modal-stats {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 18px;
-        }
-        .modal-stat {
-            flex: 1;
-            background: #F8FAFC;
-            border: 1px solid var(--border);
-            border-radius: 9px;
-            padding: 12px;
-            text-align: center;
-        }
-        .modal-stat-value { font-size: 24px; font-weight: 800; color: var(--text); line-height: 1; }
-        .modal-stat-label { font-size: 11px; color: var(--text-muted); font-weight: 500; margin-top: 4px; }
-        .modal-assignment {
-            display: flex;
-            gap: 10px;
-            align-items: flex-start;
-            padding: 13px;
-            border-radius: 9px;
-            background: #FAFAFA;
-            border: 1px solid var(--border);
-            margin-bottom: 8px;
-            transition: border-color 0.15s;
-        }
-        .modal-assignment:hover { border-color: var(--primary-light); }
-        .modal-assignment-accent {
-            width: 4px;
-            border-radius: 2px;
-            align-self: stretch;
-            min-height: 36px;
-            flex-shrink: 0;
-        }
-        .modal-assignment-name {
+        .section-title {
+            font-size: 18px;
             font-weight: 600;
-            font-size: 13px;
-            color: var(--text);
-            margin-bottom: 6px;
+            color: #333;
+            margin-bottom: 15px;
         }
-        .modal-assignment-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            align-items: center;
+
+        .pdf-input-group {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <h1>Syllabus to Plan</h1>
 
-        <!-- Hero -->
-        <header class="hero">
-            <img src="/logo" class="hero-logo" alt="SyP Logo" onerror="this.style.display='none'">
-            <h1>SyP</h1>
-            <p class="hero-tagline">Turn your syllabus into a personalized week-by-week workload forecast.</p>
-            <div class="hero-pills">
-                <span class="hero-pill">LLM-Powered</span>
-                <span class="hero-pill">Multi-Course</span>
-                <span class="hero-pill">Workload Heatmap</span>
-                <span class="hero-pill">Calendar Export</span>
-            </div>
-        </header>
+    <div class="input-section">
+        <div class="section-title">Option 1: Paste Text</div>
+        <label for="courseCode">Course Code (required)</label>
+        <input
+            type="text"
+            id="courseCode"
+            placeholder="e.g., CSE 374, MATH 101"
+            value="">
 
-        <!-- Input Card -->
-        <div class="card">
-            <div class="tabs">
-                <button class="tab active" data-tab="text" onclick="switchTab('text')">Paste Syllabus Text</button>
-                <button class="tab" data-tab="pdf" onclick="switchTab('pdf')">Upload PDF(s)</button>
-            </div>
+        <label for="syllabusText">Paste Syllabus Text</label>
+        <textarea
+            id="syllabusText"
+            placeholder="Paste your course syllabus here..."></textarea>
 
-            <!-- Text Tab -->
-            <div id="textTab" class="tab-panel active">
-                <label for="courseCode">Course Code</label>
-                <input type="text" id="courseCode" placeholder="e.g., CSE 374, MATH 101">
+        <button id="analyzeBtn" onclick="analyzeSyllabus()">Analyze Syllabus</button>
+        <div id="loading">Analyzing...</div>
+    </div>
 
-                <label for="syllabusText">Syllabus Text</label>
-                <textarea id="syllabusText" placeholder="Paste your course syllabus here..."></textarea>
+    <div class="divider">OR</div>
 
-                <button class="btn-primary" id="analyzeBtn" onclick="analyzeSyllabus()">Analyze Syllabus</button>
-                <div class="loading" id="loading">
-                    <div class="spinner"></div>
-                    <span>Analyzing with Claude...</span>
-                </div>
-            </div>
+    <div class="input-section">
+        <div class="section-title">Option 2: Upload PDFs (max 5)</div>
 
-            <!-- PDF Tab -->
-            <div id="pdfTab" class="tab-panel">
-                <div id="pdfInputsContainer">
-                    <div class="pdf-group" id="pdfGroup1">
-                        <div class="pdf-group-title">PDF 1</div>
-                        <label for="pdfFile1">PDF File</label>
-                        <input type="file" id="pdfFile1" class="pdf-file-input" accept=".pdf" onchange="handleFileChange(1)">
-                        <label for="pdfCourse1">Course Code</label>
-                        <input type="text" id="pdfCourse1" class="pdf-course-input" placeholder="e.g., CSE 374">
-                    </div>
-                </div>
-                <button class="btn-green" id="addPdfBtn" onclick="addPdfInput()">+ Add Another PDF</button>
-                <button class="btn-primary" id="analyzePdfBtn" onclick="analyzePdf()">Analyze PDFs</button>
-                <div class="loading" id="pdfLoading">
-                    <div class="spinner"></div>
-                    <span>Analyzing with Claude...</span>
-                </div>
+        <div id="pdfInputsContainer">
+            <div class="pdf-input-group" id="pdfGroup1">
+                <label for="pdfFile1">PDF File 1</label>
+                <input
+                    type="file"
+                    id="pdfFile1"
+                    class="pdf-file-input"
+                    accept=".pdf"
+                    onchange="handleFileChange(1)">
+
+                <label for="pdfCourse1">Course Code for PDF 1</label>
+                <input
+                    type="text"
+                    id="pdfCourse1"
+                    class="pdf-course-input"
+                    placeholder="e.g., CSE 374"
+                    value="">
             </div>
         </div>
 
-        <!-- Results -->
-        <div id="results" style="display:none;">
-            <div id="errorMessage"></div>
+        <button id="addPdfBtn" onclick="addPdfInput()" style="background-color: #28a745; margin-bottom: 10px;">Add Another PDF</button>
+        <button id="analyzePdfBtn" onclick="analyzePdf()">Analyze PDFs</button>
+        <div id="pdfLoading" style="display: none; color: #007bff; margin-top: 10px;">Analyzing...</div>
+    </div>
 
-            <button id="exportBtn" onclick="exportToCalendar()">Export to Calendar (Google, Apple, Outlook)</button>
+    <div id="results" style="display: none;" class="results">
+        <div id="errorMessage"></div>
 
-            <div class="card">
-                <div class="section-header">
-                    <div class="section-dot"></div>
-                    Assignments
-                </div>
-                <div id="assignmentsList"></div>
-            </div>
-
-            <div class="card">
-                <div class="section-header">
-                    <div class="section-dot" style="background:#06B6D4;"></div>
-                    Weekly Workload Intensity
-                </div>
-                <div id="workloadList"></div>
-            </div>
+        <div id="assignmentsSection">
+            <h2>Assignments</h2>
+            <div id="assignmentsList"></div>
         </div>
 
-    </div><!-- /container -->
-
-    <!-- Week Modal -->
-    <div id="weekModal" class="modal-overlay hidden" onclick="handleModalClick(event)">
-        <div class="modal-card">
-            <div class="modal-header">
-                <div>
-                    <div class="modal-title" id="modalTitle"></div>
-                    <div class="modal-subtitle" id="modalSubtitle"></div>
-                </div>
-                <button class="modal-close" onclick="closeModal()">&#x2715;</button>
-            </div>
-            <div class="modal-body" id="modalBody"></div>
+        <div id="workloadSection">
+            <h3>Weekly Workload</h3>
+            <div id="workloadList"></div>
         </div>
     </div>
 
     <script>
         let pdfInputCount = 1;
-        let currentAssignments = [];
-        let weeklyAssignmentsMap = {};
-
-        const TYPE_COLORS = {
-            exam:     '#EF4444',
-            project:  '#F97316',
-            quiz:     '#EAB308',
-            homework: '#3B82F6',
-            other:    '#6B7280'
-        };
-
-        const TYPE_WEIGHTS = { exam: 3.0, project: 2.5, quiz: 1.5, homework: 1.0, other: 1.0 };
 
         function parseDate(dateStr) {
             const [year, month, day] = dateStr.split('-').map(Number);
             return new Date(year, month - 1, day);
-        }
-
-        function switchTab(tab) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-            document.getElementById(tab + 'Tab').classList.add('active');
-            document.querySelector(`.tab[data-tab="${tab}"]`).classList.add('active');
         }
 
         function addPdfInput() {
@@ -713,27 +284,46 @@
                 alert('Maximum 5 PDF files allowed');
                 return;
             }
+
             pdfInputCount++;
             const container = document.getElementById('pdfInputsContainer');
+
             const newGroup = document.createElement('div');
-            newGroup.className = 'pdf-group';
+            newGroup.className = 'pdf-input-group';
             newGroup.id = `pdfGroup${pdfInputCount}`;
             newGroup.innerHTML = `
-                <div class="pdf-group-title">PDF ${pdfInputCount}</div>
-                <label for="pdfFile${pdfInputCount}">PDF File</label>
-                <input type="file" id="pdfFile${pdfInputCount}" class="pdf-file-input" accept=".pdf" onchange="handleFileChange(${pdfInputCount})">
-                <label for="pdfCourse${pdfInputCount}">Course Code</label>
-                <input type="text" id="pdfCourse${pdfInputCount}" class="pdf-course-input" placeholder="e.g., CSE 374">
+                <label for="pdfFile${pdfInputCount}">PDF File ${pdfInputCount}</label>
+                <input
+                    type="file"
+                    id="pdfFile${pdfInputCount}"
+                    class="pdf-file-input"
+                    accept=".pdf"
+                    onchange="handleFileChange(${pdfInputCount})">
+
+                <label for="pdfCourse${pdfInputCount}">Course Code for PDF ${pdfInputCount}</label>
+                <input
+                    type="text"
+                    id="pdfCourse${pdfInputCount}"
+                    class="pdf-course-input"
+                    placeholder="e.g., CSE 374"
+                    value="">
             `;
+
             container.appendChild(newGroup);
-            if (pdfInputCount >= 5) document.getElementById('addPdfBtn').disabled = true;
+
+            if (pdfInputCount >= 5) {
+                document.getElementById('addPdfBtn').disabled = true;
+            }
         }
 
-        function handleFileChange(index) {}
+        function handleFileChange(index) {
+            // Optional: could add validation here
+        }
 
         async function analyzeSyllabus() {
             const courseCode = document.getElementById('courseCode').value.trim();
             const syllabusText = document.getElementById('syllabusText').value.trim();
+
             const errorDiv = document.getElementById('errorMessage');
             const resultsDiv = document.getElementById('results');
             const analyzeBtn = document.getElementById('analyzeBtn');
@@ -746,6 +336,7 @@
                 resultsDiv.style.display = 'block';
                 return;
             }
+
             if (!syllabusText) {
                 errorDiv.innerHTML = '<div class="error">Please paste syllabus text.</div>';
                 resultsDiv.style.display = 'block';
@@ -753,27 +344,37 @@
             }
 
             analyzeBtn.disabled = true;
-            loading.classList.add('visible');
+            loading.style.display = 'block';
 
             try {
                 const response = await fetch('/analyze', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ course: courseCode, text: syllabusText })
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        course: courseCode,
+                        text: syllabusText
+                    })
                 });
+
                 if (!response.ok) {
-                    const err = await response.json().catch(() => ({}));
-                    throw new Error(err.detail || `HTTP error ${response.status}`);
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
                 }
+
                 const data = await response.json();
                 displayResults(data);
                 resultsDiv.style.display = 'block';
+
+                // Do NOT clear textarea and course code after analysis
+
             } catch (error) {
                 errorDiv.innerHTML = `<div class="error">Error: ${error.message}. Make sure the backend is running at http://localhost:8000</div>`;
                 resultsDiv.style.display = 'block';
             } finally {
                 analyzeBtn.disabled = false;
-                loading.classList.remove('visible');
+                loading.style.display = 'none';
             }
         }
 
@@ -785,25 +386,35 @@
 
             errorDiv.innerHTML = '';
 
-            const files = [], courses = [];
+            // Collect all files and course codes
+            const files = [];
+            const courses = [];
+
             for (let i = 1; i <= pdfInputCount; i++) {
                 const fileInput = document.getElementById(`pdfFile${i}`);
                 const courseInput = document.getElementById(`pdfCourse${i}`);
+
                 if (fileInput && fileInput.files.length > 0) {
-                    if (!courseInput.value.trim()) {
+                    const file = fileInput.files[0];
+                    const course = courseInput.value.trim();
+
+                    if (!course) {
                         errorDiv.innerHTML = `<div class="error">Course code is required for PDF ${i}.</div>`;
                         resultsDiv.style.display = 'block';
                         return;
                     }
-                    if (!fileInput.files[0].name.endsWith('.pdf')) {
-                        errorDiv.innerHTML = `<div class="error">Only PDF files are supported: ${fileInput.files[0].name}</div>`;
+
+                    if (!file.name.endsWith('.pdf')) {
+                        errorDiv.innerHTML = `<div class="error">Only PDF files are supported. Invalid file: ${file.name}</div>`;
                         resultsDiv.style.display = 'block';
                         return;
                     }
-                    files.push(fileInput.files[0]);
-                    courses.push(courseInput.value.trim());
+
+                    files.push(file);
+                    courses.push(course);
                 }
             }
+
             if (files.length === 0) {
                 errorDiv.innerHTML = '<div class="error">Please select at least one PDF file.</div>';
                 resultsDiv.style.display = 'block';
@@ -811,265 +422,156 @@
             }
 
             analyzePdfBtn.disabled = true;
-            loading.classList.add('visible');
+            loading.style.display = 'block';
 
             try {
                 const formData = new FormData();
-                files.forEach(f => formData.append('files', f));
-                courses.forEach(c => formData.append('courses', c));
 
-                const response = await fetch('/analyze-pdf', { method: 'POST', body: formData });
+                // Append all files and courses
+                files.forEach(file => {
+                    formData.append('files', file);
+                });
+
+                courses.forEach(course => {
+                    formData.append('courses', course);
+                });
+
+                const response = await fetch('/analyze-pdf', {
+                    method: 'POST',
+                    body: formData
+                });
+
                 if (!response.ok) {
-                    const err = await response.json().catch(() => ({}));
-                    throw new Error(err.detail || `HTTP error ${response.status}`);
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
                 }
+
                 const data = await response.json();
                 displayResults(data);
                 resultsDiv.style.display = 'block';
+
+                // Clear all PDF inputs and course codes after successful analysis
                 clearPdfInputs();
+
             } catch (error) {
                 errorDiv.innerHTML = `<div class="error">Error: ${error.message}. Make sure the backend is running at http://localhost:8000</div>`;
                 resultsDiv.style.display = 'block';
             } finally {
                 analyzePdfBtn.disabled = false;
-                loading.classList.remove('visible');
+                loading.style.display = 'none';
             }
         }
 
         function clearPdfInputs() {
+            // Remove all PDF input groups except the first one
             const container = document.getElementById('pdfInputsContainer');
             while (pdfInputCount > 1) {
                 const group = document.getElementById(`pdfGroup${pdfInputCount}`);
-                if (group) container.removeChild(group);
+                if (group) {
+                    container.removeChild(group);
+                }
                 pdfInputCount--;
             }
-            const fi = document.getElementById('pdfFile1');
-            const ci = document.getElementById('pdfCourse1');
-            if (fi) fi.value = '';
-            if (ci) ci.value = '';
+
+            // Clear the first group
+            const firstFileInput = document.getElementById('pdfFile1');
+            const firstCourseInput = document.getElementById('pdfCourse1');
+            if (firstFileInput) firstFileInput.value = '';
+            if (firstCourseInput) firstCourseInput.value = '';
+
+            // Re-enable the add button
             document.getElementById('addPdfBtn').disabled = false;
         }
 
         function displayResults(data) {
-            currentAssignments = data.assignments || [];
-            const exportBtn = document.getElementById('exportBtn');
-            exportBtn.style.display = currentAssignments.length > 0 ? 'inline-block' : 'none';
             displayAssignments(data.assignments);
             displayWeeklyWorkload(data.weekly_workload);
         }
 
         function displayAssignments(assignments) {
             const container = document.getElementById('assignmentsList');
+
             if (!assignments || assignments.length === 0) {
                 container.innerHTML = '<div class="empty">No assignments found.</div>';
                 return;
             }
-            const sorted = [...assignments].sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
-            container.innerHTML = sorted.map(a => {
-                const color = TYPE_COLORS[a.assignment_type] || '#6B7280';
-                const date = parseDate(a.due_date);
-                const formatted = date.toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+
+            // Sort chronologically
+            const sorted = [...assignments].sort((a, b) =>
+                new Date(a.due_date) - new Date(b.due_date)
+            );
+
+            const html = sorted.map(assignment => {
+                const date = parseDate(assignment.due_date);
+                const formattedDate = date.toLocaleDateString('en-US', {
+                    weekday: 'short',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+
                 return `
                     <div class="assignment-item">
-                        <div class="assignment-accent" style="background:${color};"></div>
-                        <div class="assignment-body">
-                            <div class="assignment-name">${a.name}</div>
-                            <div class="assignment-meta">
-                                <span class="badge badge-${a.assignment_type}">${a.assignment_type.toUpperCase()}</span>
-                                <span class="meta-text">${a.course}</span>
-                                <span class="meta-text">Due ${formatted}</span>
-                                ${a.grade_weight != null ? `<span class="grade-chip">${a.grade_weight}% of grade</span>` : ''}
-                            </div>
+                        <strong>${assignment.name}</strong>
+                        <span class="type-badge type-${assignment.assignment_type}">${assignment.assignment_type.toUpperCase()}</span>
+                        <div class="assignment-meta">
+                            ${assignment.course} • Due: ${formattedDate}
                         </div>
                     </div>
                 `;
             }).join('');
-        }
 
-        function intensityColor(normalized) {
-            const hue = Math.round(120 * (1 - normalized));
-            const lightness = Math.round(42 + normalized * 8);
-            return {
-                bg: `hsl(${hue}, 65%, ${lightness}%)`,
-                text: normalized > 0.55 ? '#fff' : '#1a1a1a'
-            };
-        }
-
-        function buildWeeklyMap(weeks) {
-            weeklyAssignmentsMap = {};
-            for (const week of weeks) {
-                const start = parseDate(week.week_start_date);
-                const end = parseDate(week.week_end_date);
-                weeklyAssignmentsMap[week.week_start_date] = currentAssignments.filter(a => {
-                    const d = parseDate(a.due_date);
-                    return d >= start && d <= end;
-                });
-            }
+            container.innerHTML = html;
         }
 
         function displayWeeklyWorkload(weeks) {
             const container = document.getElementById('workloadList');
+
             if (!weeks || weeks.length === 0) {
                 container.innerHTML = '<div class="empty">No weekly workload data.</div>';
                 return;
             }
 
-            buildWeeklyMap(weeks);
+            const html = weeks.map(week => {
+                const startDate = parseDate(week.week_start_date);
+                const endDate = parseDate(week.week_end_date);
 
-            const scores = weeks.map(w => w.intensity_score);
-            const minScore = Math.min(...scores);
-            const maxScore = Math.max(...scores);
-            const range = maxScore - minScore || 1;
+                const formattedStart = startDate.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric'
+                });
+                const formattedEnd = endDate.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
 
-            const cells = weeks.map(week => {
-                const normalized = (week.intensity_score - minScore) / range;
-                const { bg, text } = intensityColor(normalized);
-                const start = parseDate(week.week_start_date);
-                const end = parseDate(week.week_end_date);
-                const fStart = start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                const fEnd = end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                const shadow = `0 4px 14px ${bg.replace('hsl', 'hsla').replace(')', ', 0.45)')}`;
+                const typeBreakdown = Object.entries(week.assignments_by_type)
+                    .map(([type, count]) => `${count} ${type}`)
+                    .join(', ');
+
                 return `
-                    <div class="heatmap-cell"
-                         style="background:${bg}; color:${text}; box-shadow:${shadow};"
-                         onclick="openWeekModal('${week.week_start_date}', '${week.week_end_date}')">
-                        <div class="heatmap-date">${fStart} – ${fEnd}</div>
-                        <div class="heatmap-count">${week.assignment_count}</div>
-                        <div class="heatmap-label">assignment${week.assignment_count !== 1 ? 's' : ''}</div>
-                        <div class="heatmap-intensity">intensity ${week.intensity_score.toFixed(1)}</div>
-                    </div>
-                `;
-            }).join('');
-
-            container.innerHTML = `
-                <div class="heatmap-legend">
-                    <span>Low</span>
-                    <div class="legend-bar"></div>
-                    <span>High</span>
-                    <span class="heatmap-hint">Click a week for details</span>
-                </div>
-                <div class="heatmap-container">${cells}</div>
-            `;
-        }
-
-        function openWeekModal(weekStart, weekEnd) {
-            const assignments = weeklyAssignmentsMap[weekStart] || [];
-            const start = parseDate(weekStart);
-            const end = parseDate(weekEnd);
-            const fStart = start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            const fEnd = end.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-
-            const totalIntensity = assignments.reduce((sum, a) => sum + (TYPE_WEIGHTS[a.assignment_type] || 1.0), 0);
-            const totalGradeWeight = assignments.reduce((sum, a) => sum + (a.grade_weight || 0), 0);
-
-            document.getElementById('modalTitle').textContent = `${fStart} – ${fEnd}`;
-            document.getElementById('modalSubtitle').textContent =
-                `${assignments.length} assignment${assignments.length !== 1 ? 's' : ''} due this week`;
-
-            const statsHTML = `
-                <div class="modal-stats">
-                    <div class="modal-stat">
-                        <div class="modal-stat-value">${assignments.length}</div>
-                        <div class="modal-stat-label">Assignments</div>
-                    </div>
-                    <div class="modal-stat">
-                        <div class="modal-stat-value">${totalIntensity.toFixed(1)}</div>
-                        <div class="modal-stat-label">Intensity Score</div>
-                    </div>
-                    ${totalGradeWeight > 0 ? `
-                    <div class="modal-stat">
-                        <div class="modal-stat-value">${totalGradeWeight}%</div>
-                        <div class="modal-stat-label">Grade at Stake</div>
-                    </div>` : ''}
-                </div>
-            `;
-
-            const assignmentRows = assignments.map(a => {
-                const color = TYPE_COLORS[a.assignment_type] || '#6B7280';
-                const date = parseDate(a.due_date);
-                const formatted = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-                return `
-                    <div class="modal-assignment">
-                        <div class="modal-assignment-accent" style="background:${color};"></div>
-                        <div style="flex:1;min-width:0;">
-                            <div class="modal-assignment-name">${a.name}</div>
-                            <div class="modal-assignment-meta">
-                                <span class="badge badge-${a.assignment_type}">${a.assignment_type.toUpperCase()}</span>
-                                <span class="meta-text">${a.course}</span>
-                                <span class="meta-text">Due ${formatted}</span>
-                                ${a.grade_weight != null ? `<span class="grade-chip">${a.grade_weight}% of grade</span>` : ''}
-                            </div>
+                    <div class="week-item">
+                        <div class="week-header">
+                            ${formattedStart} - ${formattedEnd}
+                        </div>
+                        <div class="week-stats">
+                            <strong>${week.assignment_count}</strong> assignments •
+                            Intensity: <strong>${week.intensity_score.toFixed(1)}</strong>
+                            ${typeBreakdown ? ` • ${typeBreakdown}` : ''}
                         </div>
                     </div>
                 `;
             }).join('');
 
-            document.getElementById('modalBody').innerHTML = statsHTML + (assignmentRows || '<div class="empty">No assignments this week.</div>');
-            document.getElementById('weekModal').classList.remove('hidden');
+            container.innerHTML = html;
         }
 
-        function closeModal() {
-            document.getElementById('weekModal').classList.add('hidden');
-        }
-
-        function handleModalClick(e) {
-            if (e.target === e.currentTarget) closeModal();
-        }
-
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Escape') closeModal();
-        });
-
-        function exportToCalendar() {
-            if (!currentAssignments.length) return;
-            const ics = generateICS(currentAssignments);
-            const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'syp-assignments.ics';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        function generateICS(assignments) {
-            const lines = [
-                'BEGIN:VCALENDAR',
-                'VERSION:2.0',
-                'PRODID:-//SyP//Syllabus to Plan//EN',
-                'CALSCALE:GREGORIAN',
-                'METHOD:PUBLISH',
-            ];
-            assignments.forEach((a, i) => {
-                const dateStr = a.due_date.replace(/-/g, '');
-                const [year, month, day] = a.due_date.split('-').map(Number);
-                const next = new Date(year, month - 1, day + 1);
-                const nextStr = `${next.getFullYear()}${String(next.getMonth() + 1).padStart(2, '0')}${String(next.getDate()).padStart(2, '0')}`;
-                const uid = `syp-${i}-${dateStr}@syllabus-to-plan`;
-                const gradeNote = a.grade_weight != null ? `\\nGrade Weight: ${a.grade_weight}%` : '';
-                lines.push(
-                    'BEGIN:VEVENT',
-                    `UID:${uid}`,
-                    `DTSTART;VALUE=DATE:${dateStr}`,
-                    `DTEND;VALUE=DATE:${nextStr}`,
-                    `SUMMARY:${escapeICS(a.name)} [${a.course}]`,
-                    `DESCRIPTION:Course: ${escapeICS(a.course)}\\nType: ${a.assignment_type}${gradeNote}`,
-                    `CATEGORIES:${a.assignment_type.toUpperCase()}`,
-                    'END:VEVENT'
-                );
-            });
-            lines.push('END:VCALENDAR');
-            return lines.join('\r\n');
-        }
-
-        function escapeICS(str) {
-            return str.replace(/\\/g, '\\\\').replace(/,/g, '\\,').replace(/;/g, '\\;').replace(/\n/g, '\\n');
-        }
-
+        // Allow Enter key in course code to trigger analysis
         document.getElementById('courseCode').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') analyzeSyllabus();
+            if (e.key === 'Enter') {
+                analyzeSyllabus();
+            }
         });
     </script>
 </body>

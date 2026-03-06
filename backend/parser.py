@@ -13,7 +13,6 @@ Each assignment must have:
 - course (string): use the course code from the prompt header "Course: XXX" if provided, otherwise use "UNKNOWN"
 - due_date (string): date in MM-DD format (e.g., "10-15") if year is not specified, or YYYY-MM-DD format (e.g., "2024-10-15") if year is explicitly stated in the syllabus
 - assignment_type (string): one of "exam", "homework", "project", "quiz", "other"
-- grade_weight (number or null): percentage of the final grade this assignment is worth (e.g., 15 for 15%), or null if not stated in the syllabus
 
 Rules:
 - ONLY extract assignments with clearly stated due dates
@@ -23,7 +22,6 @@ Rules:
 - If a due date is ambiguous or missing, omit the assignment
 - Do NOT include readings, participation, or vague "weekly work" without specific dates
 - CRITICAL: Use the course code from "Course: XXX" in the prompt if provided - do NOT extract course code from syllabus content
-- For grade_weight: look for grading breakdowns like "Homework: 30%" or "Midterm (20%)" and distribute proportionally if needed. Return null if not mentioned.
 - Return ONLY valid JSON, no commentary
 
 Example output:
@@ -32,15 +30,13 @@ Example output:
     "name": "Problem Set 1",
     "course": "CSE 374",
     "due_date": "10-15",
-    "assignment_type": "homework",
-    "grade_weight": 5
+    "assignment_type": "homework"
   },
   {
     "name": "Midterm Exam",
     "course": "CSE 374",
     "due_date": "2024-11-03",
-    "assignment_type": "exam",
-    "grade_weight": 25
+    "assignment_type": "exam"
   }
 ]"""
 
@@ -58,13 +54,11 @@ def call_llm(system_prompt: str, user_prompt: str) -> str:
     """
     import os
     from anthropic import Anthropic
-    from dotenv import load_dotenv
-    load_dotenv()
 
     client = Anthropic(api_key=os.environ.get("CLAUDE_API_KEY"))
 
     message = client.messages.create(
-        model="claude-sonnet-4-0",
+        model="claude-sonnet-4-5-20250929",
         max_tokens=4096,
         system=system_prompt,
         messages=[
@@ -144,8 +138,7 @@ def parse_syllabus(syllabus_text: str, course_code: Optional[str] = None) -> lis
                 name=item["name"],
                 course=final_course,
                 due_date=normalized_date,
-                assignment_type=AssignmentType(item["assignment_type"]),
-                grade_weight=item.get("grade_weight")
+                assignment_type=AssignmentType(item["assignment_type"])
             )
             assignments.append(assignment)
 

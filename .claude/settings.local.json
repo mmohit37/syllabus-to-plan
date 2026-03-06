@@ -5,8 +5,7 @@
       "Bash(pip install:*)",
       "Bash(python -m pip install:*)",
       "Bash(python test_api.py:*)",
-      "Bash(python:*)",
-      "Bash(/Users/vikrammurali/Desktop/syllabus-to-plan/.env:*)"
+      "Bash(python:*)"
     ]
   }
 }

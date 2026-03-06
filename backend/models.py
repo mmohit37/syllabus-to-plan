@@ -1,6 +1,5 @@
 from datetime import date
 from enum import Enum
-from typing import Optional
 from pydantic import BaseModel, Field
 
 
@@ -22,7 +21,6 @@ class Assignment(BaseModel):
     course: str
     due_date: date
     assignment_type: AssignmentType
-    grade_weight: Optional[float] = None
 
 
 class WeeklyWorkload(BaseModel):

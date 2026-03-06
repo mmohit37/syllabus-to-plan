@@ -4,4 +4,3 @@ pydantic
 pdfplumber
 python-multipart
 anthropic
-python-dotenv

@@ -37,6 +37,11 @@ def serve_frontend():
     return FileResponse("index.html")
 
 
+@app.get("/logo")
+def serve_logo():
+    return FileResponse("SyP_logo_top_right.png")
+
+
 @app.get("/health")
 def health_check():
     """

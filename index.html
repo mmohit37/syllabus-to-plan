@@ -582,6 +582,181 @@
             gap: 6px;
             align-items: center;
         }
+
+        /* ── Chat ── */
+        .chat-card {
+            display: none;
+        }
+        .chat-header {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .chat-subtext {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+        .chat-chips {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        .chat-chip {
+            display: inline-block;
+            padding: 7px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 18px;
+            background: white;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+        .chat-chip:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: #F5F3FF;
+        }
+        .chat-chip:active {
+            transform: scale(0.98);
+        }
+        .chat-messages {
+            height: 340px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 12px;
+            background: #FAFBFC;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .chat-msg {
+            display: flex;
+            gap: 8px;
+            animation: msgSlideIn 0.25s ease;
+        }
+        @keyframes msgSlideIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .chat-msg.ai {
+            justify-content: flex-start;
+        }
+        .chat-msg.user {
+            justify-content: flex-end;
+        }
+        .chat-ai-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .chat-bubble {
+            max-width: 280px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+        .chat-msg.ai .chat-bubble {
+            background: white;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+        .chat-msg.user .chat-bubble {
+            background: var(--primary);
+            color: white;
+        }
+        .chat-typing {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 10px 12px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+        .chat-typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            animation: dotPulse 1.4s infinite;
+        }
+        .chat-typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .chat-typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes dotPulse {
+            0%, 60%, 100% { opacity: 0.3; }
+            30% { opacity: 1; }
+        }
+        .chat-input-row {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+        }
+        .chat-input-row textarea {
+            flex: 1;
+            min-height: 40px;
+            max-height: 100px;
+            padding: 10px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            resize: none;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .chat-input-row textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.11);
+            background: white;
+        }
+        .chat-input-row button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            font-family: inherit;
+        }
+        .chat-input-row button:hover:not(:disabled) {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(79,70,229,0.3);
+        }
+        .chat-input-row button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -663,6 +838,22 @@
                 </div>
                 <div id="workloadList"></div>
             </div>
+
+            <div class="card chat-card" id="chatCard">
+                <div class="chat-header">
+                    <div class="section-header" style="margin-bottom:0; padding-bottom:0; border-bottom:none;">
+                        <div class="section-dot"></div>
+                        Ask your Syllabus
+                    </div>
+                    <span class="chat-subtext">Powered by AI</span>
+                </div>
+                <div class="chat-chips" id="chatChips"></div>
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-input-row">
+                    <textarea id="chatInput" placeholder="Ask anything about your syllabus..."></textarea>
+                    <button onclick="sendChatMessage()" id="chatSendBtn">↑</button>
+                </div>
+            </div>
         </div>
 
     </div><!-- /container -->
@@ -685,6 +876,7 @@
         let pdfInputCount = 1;
         let currentAssignments = [];
         let weeklyAssignmentsMap = {};
+        let syllabusText = '';
 
         const TYPE_COLORS = {
             exam:     '#EF4444',
@@ -766,6 +958,7 @@
                     throw new Error(err.detail || `HTTP error ${response.status}`);
                 }
                 const data = await response.json();
+                window.syllabusText = syllabusText;
                 displayResults(data);
                 resultsDiv.style.display = 'block';
             } catch (error) {
@@ -824,6 +1017,7 @@
                     throw new Error(err.detail || `HTTP error ${response.status}`);
                 }
                 const data = await response.json();
+                window.syllabusText = '(Multiple PDFs analyzed)';
                 displayResults(data);
                 resultsDiv.style.display = 'block';
                 clearPdfInputs();
@@ -856,6 +1050,7 @@
             exportBtn.style.display = currentAssignments.length > 0 ? 'inline-block' : 'none';
             displayAssignments(data.assignments);
             displayWeeklyWorkload(data.weekly_workload);
+            initChat(data.assignments);
         }
 
         function displayAssignments(assignments) {
@@ -1070,6 +1265,183 @@
 
         document.getElementById('courseCode').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') analyzeSyllabus();
+        });
+
+        // ── Chat functionality ──
+        let chatHistory = [];
+
+        function initChat(assignments) {
+            const chatCard = document.getElementById('chatCard');
+            const chatMessages = document.getElementById('chatMessages');
+            const chatChips = document.getElementById('chatChips');
+
+            // Reset chat
+            chatHistory = [];
+            chatMessages.innerHTML = '';
+
+            // Add welcome message
+            addMessage('ai', "Hi! I've analyzed your syllabus. Ask me anything — I can answer policy questions and calculate exactly how many assignments you can afford to skip. Try one of the suggestions below!");
+
+            // Generate suggested questions
+            generateSuggestedQuestions(assignments, chatChips);
+
+            // Show chat card
+            chatCard.style.display = 'block';
+
+            // Focus input
+            document.getElementById('chatInput').focus();
+        }
+
+        function generateSuggestedQuestions(assignments, container) {
+            const suggestedQuestions = [];
+
+            // Always include these
+            suggestedQuestions.push("What's the late policy?");
+            suggestedQuestions.push("What's the attendance policy?");
+
+            // Find repeated assignment types that could be skipped
+            const assignmentCounts = {};
+            assignments.forEach(a => {
+                assignmentCounts[a.name] = (assignmentCounts[a.name] || 0) + 1;
+            });
+
+            // If there are many small assignments (e.g., 5+ with same name), suggest skip calculation
+            for (const [name, count] of Object.entries(assignmentCounts)) {
+                if (count >= 5) {
+                    suggestedQuestions.push(`How many ${name} can I miss and still get an A?`);
+                    break;
+                }
+            }
+
+            // If there are grade weights, suggest relevant questions
+            const hasGradeWeights = assignments.some(a => a.grade_weight != null);
+            if (hasGradeWeights) {
+                suggestedQuestions.push("Which assignment is worth the most?");
+                suggestedQuestions.push("What if I skip a homework assignment?");
+            }
+
+            // Render chips
+            container.innerHTML = suggestedQuestions.map(q => `
+                <button class="chat-chip" onclick="chatAskQuestion('${q.replace(/'/g, "\\'")}')">${q}</button>
+            `).join('');
+        }
+
+        function chatAskQuestion(question) {
+            const input = document.getElementById('chatInput');
+            input.value = question;
+            input.focus();
+            sendChatMessage();
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const btn = document.getElementById('chatSendBtn');
+            const question = input.value.trim();
+
+            if (!question) return;
+
+            // Add user message
+            addMessage('user', question);
+            input.value = '';
+
+            // Show typing indicator
+            showTypingIndicator();
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        question: question,
+                        syllabus_text: window.syllabusText || '',
+                        assignments: currentAssignments
+                    })
+                });
+
+                removeTypingIndicator();
+
+                if (!response.ok) {
+                    const err = await response.json().catch(() => ({}));
+                    addMessage('ai', `Error: ${err.detail || 'Unable to process question. Make sure the backend is running.'}`);
+                    return;
+                }
+
+                const data = await response.json();
+                addMessage('ai', data.answer);
+            } catch (error) {
+                removeTypingIndicator();
+                addMessage('ai', `Error: ${error.message}`);
+            } finally {
+                btn.disabled = false;
+                input.focus();
+            }
+        }
+
+        function addMessage(role, text) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `chat-msg ${role}`;
+
+            if (role === 'ai') {
+                msgDiv.innerHTML = `
+                    <div class="chat-ai-avatar">AI</div>
+                    <div class="chat-bubble">${escapeHtml(text)}</div>
+                `;
+            } else {
+                msgDiv.innerHTML = `
+                    <div class="chat-bubble">${escapeHtml(text)}</div>
+                `;
+            }
+
+            messagesContainer.appendChild(msgDiv);
+            scrollChatToBottom();
+        }
+
+        function showTypingIndicator() {
+            const messagesContainer = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'chat-msg ai';
+            typingDiv.id = 'typing-indicator';
+            typingDiv.innerHTML = `
+                <div class="chat-ai-avatar">AI</div>
+                <div class="chat-typing">
+                    <div class="chat-typing-dot"></div>
+                    <div class="chat-typing-dot"></div>
+                    <div class="chat-typing-dot"></div>
+                </div>
+            `;
+            messagesContainer.appendChild(typingDiv);
+            scrollChatToBottom();
+        }
+
+        function removeTypingIndicator() {
+            const typing = document.getElementById('typing-indicator');
+            if (typing) typing.remove();
+        }
+
+        function scrollChatToBottom() {
+            const messagesContainer = document.getElementById('chatMessages');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Handle Enter key in chat input (Enter = send, Shift+Enter = newline)
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatInput = document.getElementById('chatInput');
+            if (chatInput) {
+                chatInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        sendChatMessage();
+                    }
+                });
+            }
         });
     </script>
 </body>

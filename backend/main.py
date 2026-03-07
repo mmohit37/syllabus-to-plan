@@ -29,6 +29,16 @@ class AnalyzeResponse(BaseModel):
     weekly_workload: list[WeeklyWorkload]
 
 
+class ChatRequest(BaseModel):
+    question: str
+    syllabus_text: str
+    assignments: list[Assignment]
+
+
+class ChatResponse(BaseModel):
+    answer: str
+
+
 @app.get("/")
 def serve_frontend():
     """
@@ -157,3 +167,30 @@ async def analyze_pdf(
             assignments=[],
             weekly_workload=[]
         )
+
+
+@app.post("/chat", response_model=ChatResponse)
+def chat_about_syllabus(request: ChatRequest):
+    """
+    Answer a student's question about their syllabus.
+
+    Uses Claude to interpret the syllabus text and parsed assignments,
+    answering policy questions and calculating grade impacts.
+
+    Args:
+        request: Contains the question, syllabus text, and parsed assignments
+
+    Returns:
+        Claude's response answering the question
+    """
+    from backend.chat import answer_question
+
+    try:
+        answer = answer_question(
+            request.question,
+            request.syllabus_text,
+            request.assignments
+        )
+        return ChatResponse(answer=answer)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

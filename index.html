@@ -1046,11 +1046,14 @@
 
         function displayResults(data) {
             currentAssignments = data.assignments || [];
+            console.log('displayResults called with:', { assignments: currentAssignments.length });
             const exportBtn = document.getElementById('exportBtn');
             exportBtn.style.display = currentAssignments.length > 0 ? 'inline-block' : 'none';
             displayAssignments(data.assignments);
             displayWeeklyWorkload(data.weekly_workload);
+            console.log('About to call initChat...');
             initChat(data.assignments);
+            console.log('initChat completed');
         }
 
         function displayAssignments(assignments) {
@@ -1271,9 +1274,12 @@
         let chatHistory = [];
 
         function initChat(assignments) {
+            console.log('initChat called with', assignments.length, 'assignments');
             const chatCard = document.getElementById('chatCard');
             const chatMessages = document.getElementById('chatMessages');
             const chatChips = document.getElementById('chatChips');
+
+            console.log('Chat elements found:', { chatCard: !!chatCard, chatMessages: !!chatMessages, chatChips: !!chatChips });
 
             // Reset chat
             chatHistory = [];
@@ -1287,9 +1293,11 @@
 
             // Show chat card
             chatCard.style.display = 'block';
+            console.log('Chat card display set to block');
 
             // Focus input
             document.getElementById('chatInput').focus();
+            console.log('Chat initialized successfully');
         }
 
         function generateSuggestedQuestions(assignments, container) {

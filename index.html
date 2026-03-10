@@ -474,6 +474,33 @@
         .heatmap-label { font-size: 10px; opacity: 0.8; margin-bottom: 5px; }
         .heatmap-intensity { font-size: 10px; opacity: 0.72; }
 
+        /* ── Calendar ── */
+        .cal-strip-wrapper { margin-bottom: 20px; }
+        .cal-strip-labels { display: flex; gap: 2px; margin-bottom: 8px; }
+        .cal-strip-label { font-size: 11px; font-weight: 600; color: var(--text-muted); width: 84px; text-align: center; }
+        .cal-strip { display: flex; gap: 2px; flex-wrap: wrap; margin-bottom: 12px; }
+        .cal-strip-day { width: 12px; height: 12px; border-radius: 2px; cursor: pointer; transition: all 0.15s; border: 1px solid rgba(0,0,0,0.05); }
+        .cal-strip-day:hover { transform: scale(1.4); box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+        .cal-strip-day.empty { background: #F1F5F9; }
+
+        .cal-month-section { margin-bottom: 18px; }
+        .cal-month-header { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+        .cal-dow-header { font-size: 11px; font-weight: 600; color: var(--text-muted); text-align: center; padding: 4px 0; }
+        .cal-day {
+            min-height: 48px; padding: 4px; border-radius: 6px; text-align: center;
+            border: 1px solid var(--border); background: white;
+            cursor: pointer; transition: all 0.15s; user-select: none;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+        }
+        .cal-day.empty { border: none; background: transparent; cursor: default; }
+        .cal-day.has-assignments { background: hsl(120, 65%, 45%); color: white; border: none; }
+        .cal-day:not(.empty):hover:not(.has-assignments) { background: #F5F3FF; border-color: var(--primary); }
+        .cal-day:not(.empty):hover:not(.empty) { transform: translateY(-1px); }
+        .cal-day-number { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+        .cal-day-dots { display: flex; gap: 1px; flex-wrap: wrap; justify-content: center; width: 100%; }
+        .cal-dot { width: 4px; height: 4px; border-radius: 50%; }
+
         /* ── Modal ── */
         .modal-overlay {
             position: fixed;
@@ -839,6 +866,14 @@
                 <div id="workloadList"></div>
             </div>
 
+            <div class="card" id="calendarCard" style="display:none;">
+                <div class="section-header">
+                    <div class="section-dot" style="background:#8B5CF6;"></div>
+                    Semester Calendar
+                </div>
+                <div id="calendarContainer"></div>
+            </div>
+
             <div class="card chat-card" id="chatCard">
                 <div class="chat-header">
                     <div class="section-header" style="margin-bottom:0; padding-bottom:0; border-bottom:none;">
@@ -876,6 +911,7 @@
         let pdfInputCount = 1;
         let currentAssignments = [];
         let weeklyAssignmentsMap = {};
+        let dayAssignmentsMap = {};
         let syllabusText = '';
 
         const TYPE_COLORS = {
@@ -1051,6 +1087,8 @@
             exportBtn.style.display = currentAssignments.length > 0 ? 'inline-block' : 'none';
             displayAssignments(data.assignments);
             displayWeeklyWorkload(data.weekly_workload);
+            displayCalendar(data.assignments);
+            document.getElementById('calendarCard').style.display = 'block';
             console.log('About to call initChat...');
             initChat(data.assignments);
             console.log('initChat completed');
@@ -1217,6 +1255,198 @@
         document.addEventListener('keydown', e => {
             if (e.key === 'Escape') closeModal();
         });
+
+        function buildDayMap(assignments) {
+            dayAssignmentsMap = {};
+            for (const a of assignments) {
+                if (!dayAssignmentsMap[a.due_date]) dayAssignmentsMap[a.due_date] = [];
+                dayAssignmentsMap[a.due_date].push(a);
+            }
+        }
+
+        function dayIntensity(dateStr) {
+            const list = dayAssignmentsMap[dateStr] || [];
+            return list.reduce((s, a) => s + (TYPE_WEIGHTS[a.assignment_type] || 1), 0);
+        }
+
+        function openDayModal(dateStr) {
+            const assignments = dayAssignmentsMap[dateStr] || [];
+            const date = parseDate(dateStr);
+            const formatted = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+
+            const totalIntensity = assignments.reduce((sum, a) => sum + (TYPE_WEIGHTS[a.assignment_type] || 1.0), 0);
+            const totalGradeWeight = assignments.reduce((sum, a) => sum + (a.grade_weight || 0), 0);
+
+            document.getElementById('modalTitle').textContent = formatted;
+            document.getElementById('modalSubtitle').textContent =
+                `${assignments.length} assignment${assignments.length !== 1 ? 's' : ''} due`;
+
+            const statsHTML = `
+                <div class="modal-stats">
+                    <div class="modal-stat">
+                        <div class="modal-stat-value">${assignments.length}</div>
+                        <div class="modal-stat-label">Assignments</div>
+                    </div>
+                    <div class="modal-stat">
+                        <div class="modal-stat-value">${totalIntensity.toFixed(1)}</div>
+                        <div class="modal-stat-label">Intensity Score</div>
+                    </div>
+                    ${totalGradeWeight > 0 ? `
+                    <div class="modal-stat">
+                        <div class="modal-stat-value">${totalGradeWeight}%</div>
+                        <div class="modal-stat-label">Grade at Stake</div>
+                    </div>` : ''}
+                </div>
+            `;
+
+            const assignmentRows = assignments.map(a => {
+                const color = TYPE_COLORS[a.assignment_type] || '#6B7280';
+                return `
+                    <div class="modal-assignment">
+                        <div class="modal-assignment-accent" style="background:${color};"></div>
+                        <div style="flex:1;min-width:0;">
+                            <div class="modal-assignment-name">${a.name}</div>
+                            <div class="modal-assignment-meta">
+                                <span class="badge badge-${a.assignment_type}">${a.assignment_type.toUpperCase()}</span>
+                                <span class="meta-text">${a.course}</span>
+                                ${a.grade_weight != null ? `<span class="grade-chip">${a.grade_weight}% of grade</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('modalBody').innerHTML = statsHTML + (assignmentRows || '<div class="empty">No assignments this day.</div>');
+            document.getElementById('weekModal').classList.remove('hidden');
+        }
+
+        function displayCalendar(assignments) {
+            const container = document.getElementById('calendarContainer');
+            if (!assignments || assignments.length === 0) {
+                container.innerHTML = '<div class="empty">No assignments found.</div>';
+                return;
+            }
+
+            buildDayMap(assignments);
+
+            // Get date range
+            const dates = assignments.map(a => parseDate(a.due_date)).sort((a, b) => a - b);
+            const minDate = dates[0];
+            const maxDate = dates[dates.length - 1];
+
+            // Calculate max intensity for normalization
+            const allScores = Object.values(dayAssignmentsMap).map(list =>
+                list.reduce((s, a) => s + (TYPE_WEIGHTS[a.assignment_type] || 1), 0)
+            );
+            const maxDayScore = Math.max(...allScores) || 1;
+
+            // GitHub-style strip
+            const stripStartDate = new Date(minDate);
+            stripStartDate.setDate(stripStartDate.getDate() - stripStartDate.getDay()); // Start from Monday
+            const stripEndDate = new Date(maxDate);
+            stripEndDate.setDate(stripEndDate.getDate() + (6 - stripEndDate.getDay())); // End on Sunday
+
+            let stripHTML = '<div class="cal-strip-wrapper"><div class="cal-strip-labels">';
+            let currentMonth = stripStartDate.getMonth();
+            let monthLabels = [];
+            for (let d = new Date(stripStartDate); d <= stripEndDate; d.setDate(d.getDate() + 1)) {
+                if (d.getMonth() !== currentMonth) {
+                    currentMonth = d.getMonth();
+                    monthLabels.push(`<div class="cal-strip-label">${d.toLocaleDateString('en-US', { month: 'short' })}</div>`);
+                }
+            }
+            stripHTML += monthLabels.slice(0, Math.min(monthLabels.length, 6)).join('');
+            stripHTML += '</div><div class="cal-strip">';
+
+            for (let d = new Date(stripStartDate); d <= stripEndDate; d.setDate(d.getDate() + 1)) {
+                const dateStr = d.toISOString().split('T')[0];
+                const intensity = dayIntensity(dateStr);
+                const normalized = intensity / maxDayScore;
+                const hasAssignments = dayAssignmentsMap[dateStr] && dayAssignmentsMap[dateStr].length > 0;
+                if (hasAssignments) {
+                    const { bg } = intensityColor(normalized);
+                    stripHTML += `<div class="cal-strip-day" style="background:${bg};" onclick="openDayModal('${dateStr}')" title="${dateStr}: ${dayAssignmentsMap[dateStr].length} assignment(s)"></div>`;
+                } else {
+                    stripHTML += `<div class="cal-strip-day empty"></div>`;
+                }
+            }
+            stripHTML += '</div></div>';
+
+            // Month grids
+            let gridHTML = '';
+            let currentGridMonth = minDate.getMonth();
+            let currentGridYear = minDate.getFullYear();
+
+            // Collect all months
+            const months = [];
+            let tempDate = new Date(minDate);
+            while (tempDate <= maxDate) {
+                months.push({ month: tempDate.getMonth(), year: tempDate.getFullYear() });
+                tempDate.setMonth(tempDate.getMonth() + 1);
+            }
+
+            // Remove duplicates
+            const uniqueMonths = months.filter((m, i, arr) => i === 0 || m.month !== arr[i-1].month || m.year !== arr[i-1].year);
+
+            for (const monthData of uniqueMonths) {
+                const monthDate = new Date(monthData.year, monthData.month, 1);
+                const monthName = monthDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                gridHTML += `<div class="cal-month-section"><div class="cal-month-header">${monthName}</div><div class="cal-grid">`;
+
+                // Day of week headers
+                const dowHeaders = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+                dowHeaders.forEach(dow => {
+                    gridHTML += `<div class="cal-dow-header">${dow}</div>`;
+                });
+
+                // Get first day of month
+                const firstDay = new Date(monthData.year, monthData.month, 1);
+                const lastDay = new Date(monthData.year, monthData.month + 1, 0);
+                const startOffset = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1; // Adjust for Monday=0
+
+                // Empty cells before first day
+                for (let i = 0; i < startOffset; i++) {
+                    gridHTML += '<div class="cal-day empty"></div>';
+                }
+
+                // Days of month
+                for (let day = 1; day <= lastDay.getDate(); day++) {
+                    const cellDate = new Date(monthData.year, monthData.month, day);
+                    const dateStr = cellDate.toISOString().split('T')[0];
+                    const intensity = dayIntensity(dateStr);
+                    const normalized = intensity / maxDayScore;
+                    const hasAssignments = dayAssignmentsMap[dateStr] && dayAssignmentsMap[dateStr].length > 0;
+
+                    if (hasAssignments) {
+                        const { bg, text } = intensityColor(normalized);
+                        const assignmentTypes = {};
+                        dayAssignmentsMap[dateStr].forEach(a => {
+                            assignmentTypes[a.assignment_type] = (assignmentTypes[a.assignment_type] || 0) + 1;
+                        });
+                        const dotsHTML = Object.entries(assignmentTypes).map(([type, count]) => {
+                            const color = TYPE_COLORS[type] || '#6B7280';
+                            return `<div class="cal-dot" style="background:${color};" title="${count} ${type}"></div>`;
+                        }).join('');
+                        gridHTML += `<div class="cal-day has-assignments" style="background:${bg};color:${text};" onclick="openDayModal('${dateStr}')">
+                            <div class="cal-day-number">${day}</div>
+                            <div class="cal-day-dots">${dotsHTML}</div>
+                        </div>`;
+                    } else {
+                        gridHTML += `<div class="cal-day"></div>`;
+                    }
+                }
+
+                // Empty cells after last day
+                const endOffset = lastDay.getDay() === 0 ? 0 : 7 - lastDay.getDay();
+                for (let i = 0; i < endOffset; i++) {
+                    gridHTML += '<div class="cal-day empty"></div>';
+                }
+
+                gridHTML += '</div></div>';
+            }
+
+            container.innerHTML = stripHTML + gridHTML;
+        }
 
         function exportToCalendar() {
             if (!currentAssignments.length) return;

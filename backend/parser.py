@@ -16,24 +16,32 @@ Each assignment must have:
 - grade_weight (number or null): percentage of the final grade this assignment is worth (e.g., 15 for 15%), or null if not stated in the syllabus
 
 Rules:
-- ONLY extract assignments with clearly stated due dates
-- Do NOT invent or guess dates or years
+- Extract ALL assignments and recurring tasks that have specific dates mentioned anywhere in the syllabus (schedule tables, weekly plans, assignment lists, etc.)
+- For recurring assignments (e.g., "session quizzes every class", "weekly short responses"), extract EACH occurrence individually using its specific date from the course schedule
+- If the syllabus has a class schedule or calendar listing dates, use those dates to create individual entries for each recurring assignment
+- If a recurring assignment says "due before each class session" and the syllabus lists session dates, create one entry per session date
+- Do NOT invent or guess dates or years — only use dates explicitly listed in the syllabus
 - If the syllabus says "October 15" without a year, return "10-15" (not a full year)
 - If the syllabus says "October 15, 2024", return "2024-10-15"
-- If a due date is ambiguous or missing, omit the assignment
-- Do NOT include readings, participation, or vague "weekly work" without specific dates
 - CRITICAL: Use the course code from "Course: XXX" in the prompt if provided - do NOT extract course code from syllabus content
-- For grade_weight: look for grading breakdowns like "Homework: 30%" or "Midterm (20%)" and distribute proportionally if needed. Return null if not mentioned.
+- For grade_weight: look for grading breakdowns like "Homework: 30%" or "Midterm (20%)". For recurring items, divide the category weight by the number of items (e.g., 20 quizzes worth 20% total = 1% each). Return null if not mentioned.
 - Return ONLY valid JSON, no commentary
 
 Example output:
 [
   {
-    "name": "Problem Set 1",
+    "name": "Pre-Session Short Response 1",
     "course": "CSE 374",
     "due_date": "10-15",
     "assignment_type": "homework",
-    "grade_weight": 5
+    "grade_weight": 0.5
+  },
+  {
+    "name": "Session Quiz 3",
+    "course": "CSE 374",
+    "due_date": "10-17",
+    "assignment_type": "quiz",
+    "grade_weight": 1
   },
   {
     "name": "Midterm Exam",
